@@ -35,34 +35,13 @@
       "12"
     ],
     "users": [
-      "Иван Иванов",
-      "Олег Сидоров",
-      "Пьер Безухов",
-      "Роланд Дискейн",
-      "Холи Гибни",
-      "Джек Торренс",
-      "Антон Городецкий",
-      "Борис Гесер",
-      "Рокки Бальбоа",
-      "Джон Смит"
+      "admin"
     ],
     "emails": [
-      "snow@pisem.local",
-      "president@dka.local",
-      "fish@big.local",
-      "test@pisem.local",
-      "freedom@pisem.local",
-      "rolan@pochta.local",
-      "author@mir.local",
-      "test@lost.loca",
-      "kujo-fan@story.local"
+      "admin@admin.local"
     ],
     "passwords": [
-      "1234567",
-      "2345678",
-      "32456785",
-      "09675438",
-      "67584632"
+      "admin"
     ]
   }
 }
