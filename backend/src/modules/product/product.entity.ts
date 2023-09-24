@@ -20,9 +20,6 @@ export class ProductEntity extends defaultClasses.TimeStamps {
   public description!: string;
 
   @prop({required: true})
-  public postDate!: Date;
-
-  @prop({required: true})
   public productImage!: string;
 
   @prop({

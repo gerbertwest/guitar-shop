@@ -4,7 +4,6 @@ import { StringsCount } from '../../../types/strings-count.enum';
 export default class CreateProductDto {
   public title!: string;
   public description!: string;
-  public postDate!: Date;
   public productImage!: string;
   public type!: GuitarType;
   public code!: string;
