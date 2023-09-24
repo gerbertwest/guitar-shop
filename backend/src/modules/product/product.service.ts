@@ -29,6 +29,10 @@ export default class ProductService implements ProductServiceInterface {
       .exec();
   }
 
+  public async findByProductName(productName: string): Promise<DocumentType<ProductEntity> | null> {
+    return this.productModel.findOne({title: productName}).exec();
+  }
+
   public async find(sortType?: SortType, count?: number): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     return this.productModel

@@ -7,4 +7,7 @@ export const AppComponent = {
   UserModel: Symbol.for('UserModel'),
   ProductServiceInterface: Symbol.for('ProductServiceInterface'),
   ProductModel: Symbol.for('ProductModel'),
+  ProductController: Symbol.for('ProductController'),
+  UserController: Symbol.for('UserController'),
+  ExceptionFilterInterface: Symbol.for('ExceptionFilterInterface'),
 } as const;
