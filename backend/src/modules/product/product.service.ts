@@ -33,7 +33,7 @@ export default class ProductService implements ProductServiceInterface {
     return this.productModel.findOne({title: productName}).exec();
   }
 
-  public async find(sortType?: SortType, count?: number): Promise<DocumentType<ProductEntity>[]> {
+  public async find(count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     return this.productModel
       .find({}, {}, {limit})
@@ -42,7 +42,7 @@ export default class ProductService implements ProductServiceInterface {
       .exec();
   }
 
-  public async findByFilter(type?: string[], stringsCount?: number[], count?: number): Promise<DocumentType<ProductEntity>[]> {
+  public async findByFilter(count?: number, type?: string[], stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     return this.productModel
       .find({type: type, stringsCount: stringsCount}, {}, {limit})

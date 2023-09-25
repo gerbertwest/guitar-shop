@@ -1,6 +1,12 @@
 # Товары
 ## Получить список товаров
-GET http://localhost:4000/products/ HTTP/1.1
+GET http://localhost:4000/products?limit=10 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Получить товар по Id
+GET http://localhost:4000/products/6510260ee7b3c20b33526a61 HTTP/1.1
 Content-Type: application/json
 
 ###
@@ -11,13 +17,35 @@ Content-Type: application/json
 
 {
   "title": "Гитара хорошая 10",
-  "description": "Описание 10 хорошая",
+  "description": "Описание 10 хорошая10",
   "productImage": "image10.jpg",
   "type": "акустика",
   "code": "123456789",
   "stringsCount": 7,
-  "price": 12345,
+  "price": 100,
   "userId": "6510597bade994264239f0f0"
 }
+
+###
+
+## Изменить товар
+PATCH http://localhost:4000/products/65105d25ade994264239f0f8 HTTP/1.1
+Content-Type: application/json
+
+{
+  "price": 100
+}
+
+###
+
+## Удалить товар
+DELETE  http://localhost:4000/products/65105d25ade994264239f0f8 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Получить список фильмов с фильтром
+GET http://localhost:4000/products/filter?limit=3&type=акустика&stringsCount=12 HTTP/1.1
+Content-Type: application/json
 
 ###

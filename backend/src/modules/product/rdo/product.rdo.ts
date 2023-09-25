@@ -13,6 +13,9 @@ export default class ProductRdo {
   @Expose()
   public productImage!: string;
 
+  @Expose({ name: 'createdAt'})
+  public postDate!: Date;
+
   @Expose()
   public type!: GuitarType;
 
