@@ -33,12 +33,14 @@ export default class ProductService implements ProductServiceInterface {
     return this.productModel.findOne({title: productName}).exec();
   }
 
-  public async find(count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]> {
+  public async find(page?:number, count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     const type = sortType ?? SortType.Down;
+    const pageNumber = page ?? 1;
     return this.productModel
       .find({}, {}, {limit})
       .sort({createdAt: type})
+      .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 1)
       .populate(['userId'])
       .exec();
   }

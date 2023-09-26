@@ -9,7 +9,7 @@ export interface ProductServiceInterface extends DocumentExistsInterface {
   create(dto: CreateProductDto): Promise<DocumentType<ProductEntity>>;
   findById(productId: string): Promise<DocumentType<ProductEntity> | null>;
   findByProductName(productName: string): Promise<DocumentType<ProductEntity> | null>;
-  find(count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]>;
+  find(page?:number, count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]>;
   deleteById(productId: string): Promise<DocumentType<ProductEntity> | null>;
   updateById(productId: string, dto: UpdateProductDto): Promise<DocumentType<ProductEntity> | null>;
   findByType(count?: number, type?: string[]): Promise<DocumentType<ProductEntity>[]>;

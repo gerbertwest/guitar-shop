@@ -119,7 +119,7 @@ export default class ProductController extends Controller {
   public async index(
     { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
     res: Response): Promise<void> {
-    const products = await this.productService.find(query.limit, query.sortType);
+    const products = await this.productService.find(query.page, query.limit, query.sortType);
     this.ok(res, fillDTO(ProductRdo, products));
   }
 

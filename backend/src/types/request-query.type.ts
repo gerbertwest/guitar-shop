@@ -6,5 +6,6 @@ export type RequestQuery = {
   limit?: number;
   type?: GuitarType[];
   stringsCount?: StringsCount[];
-  sortType?: SortType
+  sortType?: SortType;
+  page?: number
 }
