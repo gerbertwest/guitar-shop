@@ -1,12 +1,12 @@
 # Товары
 ## Получить список товаров
-GET http://localhost:4000/products?limit=10 HTTP/1.1
+GET http://localhost:4000/products?limit=30&sortType=-1 HTTP/1.1
 Content-Type: application/json
 
 ###
 
 ## Получить товар по Id
-GET http://localhost:4000/products/6510260ee7b3c20b33526a61 HTTP/1.1
+GET http://localhost:4000/products/65116dacfb05ec769a978e41 HTTP/1.1
 Content-Type: application/json
 
 ###
@@ -16,13 +16,12 @@ POST http://localhost:4000/products/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Гитара хорошая 10",
+  "title": "Гитара хорошая 12",
   "description": "Описание 10 хорошая10",
-  "productImage": "image10.jpg",
   "type": "акустика",
   "code": "123456789",
-  "stringsCount": 7,
-  "price": 100,
+  "stringsCount": 4,
+  "price": 1000,
   "userId": "6510597bade994264239f0f0"
 }
 
@@ -44,8 +43,34 @@ Content-Type: application/json
 
 ###
 
-## Получить список фильмов с фильтром
-GET http://localhost:4000/products/filter?limit=3&type=акустика&stringsCount=12 HTTP/1.1
+## Получить список товаров с фильтром по типу
+GET http://localhost:4000/products/type?limit=3&type=акустика&type=электро HTTP/1.1
 Content-Type: application/json
+
+###
+
+## Получить список товаров с фильтром по кол-ву струн
+GET http://localhost:4000/products/strings?limit=10&stringsCount=4&stringsCount=12 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Получить список товаров с сортировкой по цене
+GET http://localhost:4000/products/sort/price?limit=30&sortType=-1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Отправить изображение
+
+POST http://localhost:4000/products/65116dacfb05ec769a978e41/image HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="productImage"; filename="add-item-1.png"
+Content-Type: image/png
+
+< D:/Projects/guitar-shop/frontend/markup/img/content/add-item-1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###

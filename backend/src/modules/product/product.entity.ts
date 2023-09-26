@@ -19,7 +19,7 @@ export class ProductEntity extends defaultClasses.TimeStamps {
   @prop({trim: true, required: true})
   public description!: string;
 
-  @prop({required: true})
+  @prop({required: false, default: ''})
   public productImage!: string;
 
   @prop({

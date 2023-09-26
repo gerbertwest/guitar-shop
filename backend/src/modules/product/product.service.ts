@@ -35,17 +35,36 @@ export default class ProductService implements ProductServiceInterface {
 
   public async find(count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
+    const type = sortType ?? SortType.Down;
     return this.productModel
       .find({}, {}, {limit})
-      .sort({createAt: sortType ?? SortType.Down})
+      .sort({createdAt: type})
       .populate(['userId'])
       .exec();
   }
 
-  public async findByFilter(count?: number, type?: string[], stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
+  public async sortByPrice(type?: SortType, count?: number): Promise<DocumentType<ProductEntity>[]> {
+    const limit = count ?? DEFAULT_PRODUCT_COUNT;
+    const sortType = type ?? SortType.Down;
+    return this.productModel
+      .find({}, {}, {limit})
+      .sort({price: sortType})
+      .populate(['userId'])
+      .exec();
+  }
+
+  public async findByType(count?: number, type?: string[]): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     return this.productModel
-      .find({type: type, stringsCount: stringsCount}, {}, {limit})
+      .find({type: {$in: type}}, {}, {limit})
+      .populate(['userId'])
+      .exec();
+  }
+
+  public async findByStrings(count?: number, stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
+    const limit = count ?? DEFAULT_PRODUCT_COUNT;
+    return this.productModel
+      .find({stringsCount: {$in: stringsCount}}, {}, {limit})
       .populate(['userId'])
       .exec();
   }
