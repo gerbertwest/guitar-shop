@@ -23,3 +23,8 @@ Content-Type: application/json
 }
 
 ###
+
+## Проверить токен пользователя
+GET http://localhost:4000/users/login HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
+###

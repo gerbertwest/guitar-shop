@@ -1,4 +1,4 @@
-import { IsEnum, IsMongoId, IsNumber, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsEnum, IsNumber, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { GuitarType } from '../../../types/guitar-type.enum.js';
 import { StringsCount } from '../../../types/strings-count.enum.js';
 import { ProductError, Length } from '../product.constant.js';
@@ -14,10 +14,6 @@ export default class CreateProductDto {
   @MinLength(Length.MinDescription, {message: ProductError.MinDescriptionLength})
   @MaxLength(Length.MaxDescription, {message: ProductError.MaxDescriptionLength})
   public description!: string;
-
-  // @IsString({message: ProductError.ProductImage})
-  // @Contains('.jpg' || '.png', {message: ProductError.ProductImageContains})
-  // public productImage!: string;
 
   @IsEnum(GuitarType, {message: ProductError.GuitarType})
   public type!: GuitarType;
@@ -35,6 +31,5 @@ export default class CreateProductDto {
   @Max(Length.MaxPrice, {message: ProductError.MaxPriceLength})
   public price!: number;
 
-  @IsMongoId({message: 'userId field must be valid an id'})
   public userId!: string;
 }

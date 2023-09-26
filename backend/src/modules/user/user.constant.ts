@@ -1,3 +1,5 @@
+export const JWT_ALGORITHM = 'HS256';
+
 export enum Value {
   MinName = 1,
   MaxName = 15,

@@ -8,21 +8,22 @@ Content-Type: application/json
 ## Получить товар по Id
 GET http://localhost:4000/products/65116dacfb05ec769a978e41 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
 
 ###
 
 ## Добавить товар
 POST http://localhost:4000/products/ HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
 
 {
-  "title": "Гитара хорошая 12",
-  "description": "Описание 10 хорошая10",
+  "title": "Гитара хорошая 14",
+  "description": "Описание 10 хорошая10 тест токена 2",
   "type": "акустика",
   "code": "123456789",
   "stringsCount": 4,
-  "price": 1000,
-  "userId": "6510597bade994264239f0f0"
+  "price": 1001
 }
 
 ###
@@ -30,6 +31,7 @@ Content-Type: application/json
 ## Изменить товар
 PATCH http://localhost:4000/products/65105d25ade994264239f0f8 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
 
 {
   "price": 100
@@ -40,6 +42,7 @@ Content-Type: application/json
 ## Удалить товар
 DELETE  http://localhost:4000/products/65105d25ade994264239f0f8 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
 
 ###
 
@@ -56,7 +59,7 @@ Content-Type: application/json
 ###
 
 ## Получить список товаров с сортировкой по цене
-GET http://localhost:4000/products/sort/price?limit=30&sortType=-1 HTTP/1.1
+GET http://localhost:4000/products/sort?limit=30&sortType=1 HTTP/1.1
 Content-Type: application/json
 
 ###
@@ -65,6 +68,7 @@ Content-Type: application/json
 
 POST http://localhost:4000/products/65116dacfb05ec769a978e41/image HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjY1MTA1OTdiYWRlOTk0MjY0MjM5ZjBmMCIsImlhdCI6MTY5NTcyMDE4OSwiZXhwIjoxNjk2MTUyMTg5fQ.YP_o_Qs9YbGETyvC5LIFIOpJjAwXdu58JcmF_l06WZI
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="productImage"; filename="add-item-1.png"

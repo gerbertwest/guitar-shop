@@ -20,6 +20,7 @@ import { DocumentExistsMiddleware } from '../../core/middleware/document-exists.
 import { UploadFileMiddleware } from '../../core/middleware/upload-file.middleware.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
+import { PrivateRouteMiddleware } from '../../core/middleware/private-route.middleware.js';
 
 type ParamsProductDetails = {
   productId: string;
@@ -39,12 +40,13 @@ export default class ProductController extends Controller {
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({path: '/type', method: HttpMethod.Get, handler: this.findProductsByType});
     this.addRoute({path: '/strings', method: HttpMethod.Get, handler: this.findProductsByStrings});
-    this.addRoute({path: '/sort/price', method: HttpMethod.Get, handler: this.sortByPrice});
+    this.addRoute({path: '/sort', method: HttpMethod.Get, handler: this.sortByPrice});
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(CreateProductDto)
       ]
     });
@@ -53,8 +55,9 @@ export default class ProductController extends Controller {
       method: HttpMethod.Get,
       handler: this.show,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('productId'),
-        new DocumentExistsMiddleware(this.productService, 'Product', 'productId')
+        new DocumentExistsMiddleware(this.productService, 'Product', 'productId'),
       ]
     });
     this.addRoute({
@@ -62,6 +65,7 @@ export default class ProductController extends Controller {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('productId'),
         new DocumentExistsMiddleware(this.productService, 'Product', 'productId')
       ]
@@ -71,6 +75,7 @@ export default class ProductController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('productId'),
         new ValidateDtoMiddleware(UpdateProductDto),
         new DocumentExistsMiddleware(this.productService, 'Product', 'productId')
@@ -81,6 +86,7 @@ export default class ProductController extends Controller {
       method: HttpMethod.Post,
       handler: this.uploadImage,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('productId'),
         new DocumentExistsMiddleware(this.productService, 'Product', 'productId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'productImage'),
@@ -89,7 +95,7 @@ export default class ProductController extends Controller {
   }
 
   public async create(
-    { body }: Request<Record<string, unknown>, Record<string, unknown>, CreateProductDto>,
+    { body, user }: Request<Record<string, unknown>, Record<string, unknown>, CreateProductDto>,
     res: Response,
   ): Promise<void> {
     const existsProduct = await this.productService.findByProductName(body.title);
@@ -102,7 +108,7 @@ export default class ProductController extends Controller {
       );
     }
 
-    const result = await this.productService.create(body);
+    const result = await this.productService.create({ ...body, userId: user.id });
     const product = await this.productService.findById(result.id);
     this.created(
       res,
