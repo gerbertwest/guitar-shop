@@ -2,8 +2,25 @@ import { Helmet } from 'react-helmet-async';
 import Footer from '../components/footer';
 import Logo from '../components/logo';
 import UserName from '../components/user-name';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/index';
+import { productSelector } from '../store/selectors';
+import { fetchProductByIdAction } from '../store/api-actions';
 
 function ProductScreen(): JSX.Element {
+
+  const params = useParams();
+  const dispatch = useAppDispatch();
+  const productInfo = useAppSelector(productSelector);
+
+  useEffect(() => {
+    if (!productInfo.isError) {
+      dispatch(fetchProductByIdAction(String(params.id)));
+    }
+  }, [dispatch, productInfo.isError, params.id]);
+
+
   return (
     <>
       <Helmet>
@@ -38,9 +55,9 @@ function ProductScreen(): JSX.Element {
               </li>
             </ul>
             <div className="product-container">
-              <img className="product-container__img" src="img/content/catalog-product-1.png" srcSet="img/content/catalog-product-1@2x.png 2x" width="90" height="235" alt=""></img>
+              <img className="product-container__img" src={productInfo.data?.productImage} srcSet="img/content/catalog-product-1@2x.png 2x" width="90" height="235" alt=""></img>
               <div className="product-container__info-wrapper">
-                <h2 className="product-container__title title title--big title--uppercase">СURT Z30 Plus</h2>
+                <h2 className="product-container__title title title--big title--uppercase">{productInfo.data?.title}</h2>
                 <br></br>
                 <br></br>
                 <div className="tabs"><a className="button button--medium tabs__button" href="#characteristics">Характеристики</a><a className="button button--black-border button--medium tabs__button" href="#description">Описание</a>
@@ -48,11 +65,11 @@ function ProductScreen(): JSX.Element {
                     <table className="tabs__table">
                       <tr className="tabs__table-row">
                         <td className="tabs__title">Артикул:</td>
-                        <td className="tabs__value">SO754565</td>
+                        <td className="tabs__value">{productInfo.data?.code}</td>
                       </tr>
                       <tr className="tabs__table-row">
                         <td className="tabs__title">Тип:</td>
-                        <td className="tabs__value">Электрогитара</td>
+                        <td className="tabs__value">{productInfo.data?.type}</td>
                       </tr>
                       <tr className="tabs__table-row">
                         <td className="tabs__title">Количество струн:</td>

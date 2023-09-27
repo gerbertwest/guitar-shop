@@ -1,7 +1,7 @@
-import { AppRoute, AuthorizationStatus } from '../../const';
+import { AppRoute } from '../../const';
 import ErrorScreen from '../../pages/error-screen';
 import MainScreen from '../../pages/main-screen';
-import {Route, BrowserRouter, Routes} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import ProductListScreen from '../../pages/product-list-screen';
 import ProductScreen from '../../pages/product-screen';
 import AddProductScreen from '../../pages/add-product-screen';
@@ -9,12 +9,17 @@ import RegistrationScreen from '../../pages/registration-screen';
 import EditProductScreen from '../../pages/edit-product-screen';
 import PrivateRoute from '../private-route';
 import { HelmetProvider } from 'react-helmet-async';
+import { useAppSelector } from '../../hooks/index';
+import HistoryRouter from '../history-route';
+import browserHistory from '../../browser-history';
 
 function App(): JSX.Element {
 
+  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <HistoryRouter history={browserHistory}>
         <Routes>
           <Route
             path={AppRoute.Main}
@@ -24,27 +29,39 @@ function App(): JSX.Element {
             path={AppRoute.Products}
             element={
               <PrivateRoute
-                authorizationStatus={AuthorizationStatus.Auth}
+                authorizationStatus={authorizationStatus}
               >
                 <ProductListScreen/>
               </PrivateRoute>
             }
           />
-          <Route
-            path={AppRoute.Product}
-            element={
+
+          <Route path={`${AppRoute.Products}:id`}>
+            <Route index element={
               <PrivateRoute
-                authorizationStatus={AuthorizationStatus.NoAuth}
+                authorizationStatus={authorizationStatus}
               >
                 <ProductScreen/>
               </PrivateRoute>
             }
-          />
+            />
+            <Route
+              path={AppRoute.EditProduct}
+              element={
+                <PrivateRoute
+                  authorizationStatus={authorizationStatus}
+                >
+                  <EditProductScreen/>
+                </PrivateRoute>
+              }
+            />
+          </Route>
+
           <Route
             path={AppRoute.NewProduct}
             element={
               <PrivateRoute
-                authorizationStatus={AuthorizationStatus.NoAuth}
+                authorizationStatus={authorizationStatus}
               >
                 <AddProductScreen/>
               </PrivateRoute>
@@ -54,7 +71,7 @@ function App(): JSX.Element {
             path={AppRoute.EditProduct}
             element={
               <PrivateRoute
-                authorizationStatus={AuthorizationStatus.NoAuth}
+                authorizationStatus={authorizationStatus}
               >
                 <EditProductScreen/>
               </PrivateRoute>
@@ -69,7 +86,7 @@ function App(): JSX.Element {
             element={<ErrorScreen/>}
           />
         </Routes>
-      </BrowserRouter>
+      </HistoryRouter>
     </HelmetProvider>
   );
 }

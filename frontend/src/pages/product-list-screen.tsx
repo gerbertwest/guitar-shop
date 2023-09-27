@@ -5,8 +5,13 @@ import UserName from '../components/user-name';
 import CatalogFilter from '../components/catalog-filter';
 import CatalogSort from '../components/catalog-sort';
 import CatalogCards from '../components/catalog-cards';
+import { useAppSelector } from '../hooks/index';
+import { productsListSelector } from '../store/selectors';
 
 function ProductListScreen(): JSX.Element {
+
+  const products = useAppSelector(productsListSelector);
+
   return (
     <>
       <Helmet>
@@ -42,7 +47,7 @@ function ProductListScreen(): JSX.Element {
               <div className="catalog">
                 <CatalogFilter/>
                 <CatalogSort/>
-                <CatalogCards/>
+                <CatalogCards products={products.data}/>
               </div>
               <button className="button product-list__button button--red button--big">Добавить новый товар</button>
               <div className="pagination product-list__pagination">

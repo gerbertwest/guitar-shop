@@ -5,6 +5,9 @@ import UserRdo from '../../user/rdo/user.rdo.js';
 
 export default class ProductRdo {
   @Expose()
+  public id!: string;
+
+  @Expose()
   public title!: string;
 
   @Expose()

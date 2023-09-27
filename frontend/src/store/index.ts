@@ -14,5 +14,3 @@ export const store = configureStore({
       },
     }).concat(redirect),
 });
-
-

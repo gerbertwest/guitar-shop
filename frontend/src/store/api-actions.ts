@@ -7,6 +7,7 @@ import { AppDispatch, State } from '../types/state';
 import { UserData } from '../types/user-data';
 import { Product } from '../types/product';
 import { loadProductById, loadProducts, requireAuthorization } from './action';
+import { NewUser } from '../types/new-user';
 
 const redirectToRoute = createAction<string>(REDIRECT_ACTION_NAME);
 
@@ -29,7 +30,7 @@ export const fetchProductByIdAction = createAsyncThunk<void, string, {
   state: State;
   extra: AxiosInstance;
 }>(
-  'data/fetchFilmById',
+  'data/fetchProductById',
   async (productId, {dispatch, extra: api}) => {
     try {
       dispatch(loadProductById({isError: false}));
@@ -69,20 +70,29 @@ export const loginAction = createAsyncThunk<void, AuthData, {
     const {data: {token}} = await api.post<UserData>(APIRoute.Login, {email, password});
     saveToken(token);
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
-    dispatch(redirectToRoute(AppRoute.Main));
+    dispatch(redirectToRoute(AppRoute.Products));
   },
 );
 
 export const logoutAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
-  state: State;
-  extra: AxiosInstance;
 }>(
   'user/logout',
-  async (_arg, {dispatch, extra: api}) => {
-    await api.delete(APIRoute.Logout);
+  (_arg, {dispatch}) => {
     dropToken();
     dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
   },
+);
+
+export const registerAction = createAsyncThunk<void, NewUser, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/register',
+  async ({ email, password, name }, {dispatch, extra: api}) => {
+    await api.post<{ id: string }>(APIRoute.Register, {email, password, name});
+    dispatch(redirectToRoute(AppRoute.Main));
+  }
 );
 
