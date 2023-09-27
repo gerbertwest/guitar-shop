@@ -12,3 +12,11 @@ export enum AuthorizationStatus {
   NoAuth = 'NO_AUTH',
   Unknown = 'UNKNOWN',
 }
+
+export enum APIRoute {
+  Products = '/products/',
+  Login = 'users/login',
+  Logout = 'users/logout',
+}
+
+export const REDIRECT_ACTION_NAME = 'main/redirectToRoute';
