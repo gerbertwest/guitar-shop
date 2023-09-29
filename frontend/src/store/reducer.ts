@@ -1,5 +1,5 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {addProduct, loadProductById, loadProducts, requireAuthorization, setProductData} from './action';
+import {addProduct, loadProductById, loadProducts, requireAuthorization} from './action';
 import {AuthorizationStatus} from '../const';
 import { Store } from '../types/store';
 
@@ -14,8 +14,7 @@ const initialState: Store = {
     isError: false,
     isLoading: false,
     isSending: false,
-  },
-  editProduct: null
+  }
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -34,9 +33,6 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(addProduct, (state, action) => {
       state.product.isSending = action.payload.isSending ?? false;
-    })
-    .addCase(setProductData, (state, action) => {
-      state.editProduct = action.payload.editProduct ?? null;
     });
 });
 

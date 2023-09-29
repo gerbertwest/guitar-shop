@@ -12,6 +12,5 @@ export type Store = {
     isLoading: boolean;
     isSending: boolean;
   };
-  editProduct: Product | null;
   authorizationStatus: AuthorizationStatus;
 };

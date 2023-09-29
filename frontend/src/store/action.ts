@@ -9,4 +9,4 @@ export const loadProductById = createAction<{data?: Product; isError?: boolean; 
 export const addProduct = createAction<{isError?: boolean; isSending?: boolean }>('data/addProduct');
 export const editProduct = createAction<{data?: Product; isError?: boolean; isLoading?: boolean }>('data/editProduct');
 export const deleteProduct = createAction<{data?: Product; isError?: boolean; isLoading?: boolean }>('data/editProduct');
-export const setProductData = createAction<{editProduct?: Product}>('data/setProductData');
+

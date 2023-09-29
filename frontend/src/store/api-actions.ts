@@ -19,7 +19,7 @@ export const fetchProductsAction = createAsyncThunk<void, undefined, {
   'data/fetchProducts',
   async (_arg, {dispatch, extra: api}) => {
     dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(APIRoute.Products);
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}?page=2`);
     dispatch(loadProducts({isLoading: false}));
     dispatch(loadProducts({data}));
   },

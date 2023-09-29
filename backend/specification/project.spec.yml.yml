@@ -1,0 +1,465 @@
+openapi: '3.0.2'
+info:
+  title: API сервер для проекта «Guitar Shop».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Guitar Shop».
+  version: '0.5'
+servers:
+  - url: https://localhost:4000
+tags:
+  - name: products
+    description: Действия с товарами.
+  - name: users
+    description: Действия с пользователем.
+paths:
+   /users/register:
+     post:
+       tags:
+         - users
+       summary: Регистрация пользователя
+       description: Регистрирует нового пользователя.
+
+       requestBody:
+         description: Информация для создания нового пользователя.
+         content:
+           application/json:
+            schema:
+             $ref: '#/components/schemas/createUser'
+         required: true
+
+       responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "400":
+          description: Пользователь с таким email уже существует.
+
+   /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Авторизационные данные пользователя.
+        content:
+          application/json:
+            schema:
+             $ref: '#/components/schemas/authUser'
+        required: true
+
+      responses:
+        "200":
+          description: Авторизация выполнена. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authLogin'
+
+        "400":
+          description: Ошибка тела запроса.
+
+      security:
+        - tokenAuth: []
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      requestBody:
+        description: Авторизационный токен пользователя.
+        content:
+            application/json:
+              schema:
+                properties:
+                  X-Token:
+                    type: string
+                    example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+        required: true
+
+      responses:
+        "200":
+          description: Авторизация выполнена.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authInfo'
+
+        "400":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+   /products/:
+    get:
+     tags:
+        - products
+     summary: Получить список товаров
+     description: Возвращает массив товаров. Каждый товар описан в виде объекта.
+     parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+     responses:
+        "200":
+          description: Массив товаров
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  allOf:
+                    - $ref: '#/components/schemas/productsList'
+                    - type: object
+    post:
+       tags:
+         - products
+       summary: Добавить товар
+       description: Возвращает новый товар.
+       parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+        - name: productId
+          in: path
+          description: Уникальный идентификатор товара
+          required: true
+          schema:
+            type: string
+            example: 65105d25ade994264239f0f8
+       requestBody:
+        description: Объект с новым товаром
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productPost'
+        required: true
+       responses:
+        '201':
+          description: Объект нового товара
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/productsList'
+        '400':
+          description: Ошибка тела запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+        '401':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+       security:
+        - tokenAuth: []
+
+   /products/{productId}:
+    get:
+     tags:
+       - products
+     summary: Получить товар
+     description: Возвращает товар с идентификатором `productId`.
+
+     requestBody:
+        description: Уникальный идентификатор товара
+        content:
+            application/json:
+              schema:
+                type: string
+                example: 6516f3506b071261ac81f4a5
+        required: true
+
+     responses:
+        "200":
+          description: Объект Товара
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productsList'
+        "400":
+          description: Товар с идентификатором `productId` не найден
+
+    delete:
+     tags:
+       - products
+     summary: Удалить товар
+     description: Удаление карточки товара
+     parameters:
+        - name: productId
+          in: path
+          description: Уникальный идентификатор товара
+          required: true
+          schema:
+            type: string
+            example: 65105d25ade994264239f0f8
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+     responses:
+        '200':
+          description: Объект фильма
+        '400':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+     security:
+        - tokenAuth: []
+
+    patch:
+       tags:
+       - products
+       summary: Добавить товар
+       description: Возвращает новый товар.
+       parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+        - name: productId
+          in: path
+          description: Уникальный идентификатор товара
+          required: true
+          schema:
+            type: string
+            example: 65105d25ade994264239f0f8
+       requestBody:
+        description: Объект с изменениями товара
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productPost'
+        required: true
+       responses:
+        '201':
+          description: Объект измененного товара
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/productsList'
+        '400':
+          description: Ошибка тела запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+        '401':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+       security:
+        - tokenAuth: []
+
+   /products/{productId}/image:
+    post:
+      tags:
+        - products
+      summary: Загрузить изображение товара
+      description: Загружает изображение товара. Изображение
+        товара должно быть в формате `jpg/png`.
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+        - name: productId
+          in: path
+          description: Уникальный идентификатор товара
+          required: true
+          schema:
+            type: string
+            example: 65105d25ade994264239f0f8
+      requestBody:
+        description: Ссылка на изображение товара
+        content:
+          application/json:
+            schema:
+              properties:
+                  avatar:
+                    type: string
+                    example: img/1.jpg
+        required: true
+
+      responses:
+        "200":
+          description: Ссылка на изображение товара.
+
+        "400":
+           description: Ошибка тела запроса.
+
+
+components:
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        name:
+          type: string
+          example: Keks
+
+        password:
+          type: string
+          example: 123456
+
+    user:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: Keks
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+    authUser:
+      type: object
+
+      properties:
+         email:
+          type: string
+          example: keks@htmlacademy.ru
+
+         password:
+          type: string
+          example: 123456
+
+    authLogin:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        token:
+          type: string
+          example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+    authInfo:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+    authErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          example: You are not logged in or you do not have permission to this page.
+
+    productsList:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 6516f3506b071261ac81f4a5
+        title:
+          type: string
+          example: Хорошая гитара 23
+        description:
+          type: string
+          example: Образец описания
+        productImage:
+          type: string
+          example: image.jpg
+        postDate:
+          type: string
+          example: 2023-09-29T15:54:56.541Z
+        type:
+          type: string
+          example: Электрогитара
+        code:
+          type: string
+          example: 1235686
+        stringsCount:
+          type: number
+          example: 6
+        price:
+          type: number
+          example: 100
+        user:
+          type: object
+          properties:
+            email:
+               type: string
+               example: keks@htmlacademy.ru
+            name:
+               type: string
+               example: Keks
+
+    productPost:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Хорошая гитара 23
+        description:
+          type: string
+          example: Образец описания
+        type:
+          type: string
+          example: Электрогитара
+        code:
+          type: string
+          example: 1235686
+        stringsCount:
+          type: number
+          example: 6
+        price:
+          type: number
+          example: 100
+
+    notFoundErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Validation error

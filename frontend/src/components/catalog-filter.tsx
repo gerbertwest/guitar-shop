@@ -9,22 +9,22 @@ function CatalogFilter(): JSX.Element {
           <label htmlFor="acoustic">Акустические гитары</label>
         </div>
         <div className="form-checkbox catalog-filter__block-item">
-          <input className="visually-hidden" type="checkbox" id="electric" name="electric" checked></input>
+          <input className="visually-hidden" type="checkbox" id="electric" name="electric"></input>
           <label htmlFor="electric">Электрогитары</label>
         </div>
         <div className="form-checkbox catalog-filter__block-item">
-          <input className="visually-hidden" type="checkbox" id="ukulele" name="ukulele" checked></input>
+          <input className="visually-hidden" type="checkbox" id="ukulele" name="ukulele"></input>
           <label htmlFor="ukulele">Укулеле</label>
         </div>
       </fieldset>
       <fieldset className="catalog-filter__block">
         <legend className="catalog-filter__block-title">Количество струн</legend>
         <div className="form-checkbox catalog-filter__block-item">
-          <input className="visually-hidden" type="checkbox" id="4-strings" name="4-strings" checked></input>
+          <input className="visually-hidden" type="checkbox" id="4-strings" name="4-strings"></input>
           <label htmlFor="4-strings">4</label>
         </div>
         <div className="form-checkbox catalog-filter__block-item">
-          <input className="visually-hidden" type="checkbox" id="6-strings" name="6-strings" checked></input>
+          <input className="visually-hidden" type="checkbox" id="6-strings" name="6-strings"></input>
           <label htmlFor="6-strings">6</label>
         </div>
         <div className="form-checkbox catalog-filter__block-item">
@@ -32,7 +32,7 @@ function CatalogFilter(): JSX.Element {
           <label htmlFor="7-strings">7</label>
         </div>
         <div className="form-checkbox catalog-filter__block-item">
-          <input className="visually-hidden" type="checkbox" id="12-strings" name="12-strings" disabled></input>
+          <input className="visually-hidden" type="checkbox" id="12-strings" name="12-strings"></input>
           <label htmlFor="12-strings">12</label>
         </div>
       </fieldset>
