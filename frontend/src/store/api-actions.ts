@@ -1,12 +1,12 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { APIRoute, AppRoute, AuthorizationStatus, REDIRECT_ACTION_NAME} from '../const';
+import { APIRoute, AppRoute, AuthorizationStatus, HTTP_CODE, REDIRECT_ACTION_NAME} from '../const';
 import { dropToken, saveToken } from '../services/token';
 import { AuthData } from '../types/auth-data';
 import { AppDispatch, State } from '../types/state';
 import { UserData } from '../types/user-data';
-import { Product } from '../types/product';
-import { loadProductById, loadProducts, requireAuthorization } from './action';
+import { AddProduct, EditProduct, Product } from '../types/product';
+import { addProduct, loadProductById, loadProducts, requireAuthorization } from './action';
 import { NewUser } from '../types/new-user';
 
 const redirectToRoute = createAction<string>(REDIRECT_ACTION_NAME);
@@ -35,9 +35,89 @@ export const fetchProductByIdAction = createAsyncThunk<void, string, {
     try {
       dispatch(loadProductById({isError: false}));
       dispatch(loadProductById({isLoading: true}));
-      const {data} = await api.get<Product>(`${APIRoute.Products}${productId}`);
+      const {data} = await api.get<Product>(`${APIRoute.Products}/${productId}`);
       dispatch(loadProductById({isLoading: false}));
       dispatch(loadProductById({data}));
+    } catch {
+      dispatch(loadProductById({isError: true}));
+    }
+  },
+);
+
+export const addProductAction = createAsyncThunk<void, AddProduct, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/AddProduct',
+  async ({title, description, type, code, stringsCount, price, productImage}, {dispatch, extra: api}) => {
+    dispatch(addProduct({isSending: true}));
+    const postData = await api.post<{ id: string }>(AppRoute.Products, {
+      title,
+      description,
+      type,
+      code,
+      stringsCount,
+      price,
+    });
+
+    if (postData.status === HTTP_CODE.CREATED && productImage) {
+      const payload = new FormData();
+      payload.append('productImage', productImage);
+      await api.post(`${AppRoute.Products}/${postData.data.id}/image`, payload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      dispatch(addProduct({isSending: false}));
+      dispatch(redirectToRoute(AppRoute.Products));
+    }
+  },
+);
+
+export const editProductAction = createAsyncThunk<void, EditProduct, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/EditProduct',
+  async ({title, description, type, code, stringsCount, price, productImage, id}, {dispatch, extra: api}) => {
+    if (id) {
+      const postData = await api.patch(`${AppRoute.Products}/${id}`, {
+        title,
+        description,
+        type,
+        code,
+        stringsCount,
+        price,
+      });
+
+      if (postData.status === HTTP_CODE.OK && productImage) {
+        const payload = new FormData();
+        payload.append('productImage', productImage);
+        await api.post(`${AppRoute.Products}/${id}/image`, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+    }
+    dispatch(redirectToRoute(AppRoute.Products));
+  },
+);
+
+export const deleteProductByIdAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/deleteProductById',
+  async (productId, {dispatch, extra: api}) => {
+    try {
+      dispatch(loadProductById({isError: false}));
+      dispatch(loadProductById({isLoading: true}));
+      await api.delete<Product>(`${APIRoute.Products}/${productId}`);
+      dispatch(loadProductById({isLoading: false}));
+      const {data} = await api.get<Product[]>(APIRoute.Products);
+      dispatch(loadProducts({isLoading: false}));
+      dispatch(loadProducts({data}));
     } catch {
       dispatch(loadProductById({isError: true}));
     }

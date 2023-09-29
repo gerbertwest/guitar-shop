@@ -16,11 +16,11 @@ import { RequestQuery } from '../../types/request-query.type.js';
 import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middleware/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middleware/document-exists.middleware.js';
-//import UploadImageResponse from './rdo/upload-image.response.js';
 import { UploadFileMiddleware } from '../../core/middleware/upload-file.middleware.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { PrivateRouteMiddleware } from '../../core/middleware/private-route.middleware.js';
+import UploadImageResponse from './rdo/upload-image.response.js';
 
 type ParamsProductDetails = {
   productId: string;
@@ -31,9 +31,9 @@ export default class ProductController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.ProductServiceInterface) private readonly productService: ProductServiceInterface,
-    @inject(AppComponent.ConfigInterface) protected readonly configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for FilmController…');
 
@@ -176,7 +176,7 @@ export default class ProductController extends Controller {
     const {productId} = req.params;
     const uploadFile = {productImage: req.file?.filename};
     await this.productService.updateById(productId, uploadFile);
-    this.created(res, uploadFile);
+    this.created(res, fillDTO(UploadImageResponse, uploadFile));
   }
 
 }

@@ -10,6 +10,8 @@ export type Store = {
     data: Product | null;
     isError: boolean;
     isLoading: boolean;
+    isSending: boolean;
   };
+  editProduct: Product | null;
   authorizationStatus: AuthorizationStatus;
 };

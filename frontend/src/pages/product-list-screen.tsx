@@ -5,12 +5,22 @@ import UserName from '../components/user-name';
 import CatalogFilter from '../components/catalog-filter';
 import CatalogSort from '../components/catalog-sort';
 import CatalogCards from '../components/catalog-cards';
-import { useAppSelector } from '../hooks/index';
+import { useAppDispatch, useAppSelector } from '../hooks/index';
 import { productsListSelector } from '../store/selectors';
+import { Link, useNavigate } from 'react-router-dom';
+import { AppRoute } from '../const';
+import { useEffect } from 'react';
+import { fetchProductsAction } from '../store/api-actions';
 
 function ProductListScreen(): JSX.Element {
 
   const products = useAppSelector(productsListSelector);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProductsAction());
+  }, [dispatch]);
 
   return (
     <>
@@ -24,9 +34,11 @@ function ProductListScreen(): JSX.Element {
               <Logo/>
               <nav className="main-nav">
                 <ul className="main-nav__list">
-                  <li className="main-nav__item"><a className="link main-nav__link" href="main">Каталог</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Каталог</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Список товаров</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>Список товаров</Link>
                   </li>
                 </ul>
               </nav>
@@ -39,9 +51,11 @@ function ProductListScreen(): JSX.Element {
             <div className="container">
               <h1 className="product-list__title">Список товаров</h1>
               <ul className="breadcrumbs">
-                <li className="breadcrumbs__item"><a className="link" href="./main.html">Вход</a>
+                <li className="breadcrumbs__item">
+                  <Link className="link" to={AppRoute.Main}>Вход</Link>
                 </li>
-                <li className="breadcrumbs__item"><a className="link">Товары</a>
+                <li className="breadcrumbs__item">
+                  <Link className="link" to=''>Товары</Link>
                 </li>
               </ul>
               <div className="catalog">
@@ -49,7 +63,10 @@ function ProductListScreen(): JSX.Element {
                 <CatalogSort/>
                 <CatalogCards products={products.data}/>
               </div>
-              <button className="button product-list__button button--red button--big">Добавить новый товар</button>
+              <button className="button product-list__button button--red button--big"
+                onClick={() => navigate(AppRoute.NewProduct)}
+              >Добавить новый товар
+              </button>
               <div className="pagination product-list__pagination">
                 <ul className="pagination__list">
                   <li className="pagination__page pagination__page--active"><a className="link pagination__page-link" href="1">1</a>

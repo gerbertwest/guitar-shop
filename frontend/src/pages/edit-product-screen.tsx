@@ -1,9 +1,104 @@
 import { Helmet } from 'react-helmet-async';
 import Footer from '../components/footer';
+import dayjs from 'dayjs';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
+import GuitarType from '../components/guitar-type';
 import Logo from '../components/logo';
+import StringsCount from '../components/strings-count';
 import UserName from '../components/user-name';
+import { AppRoute } from '../const';
+import { useAppDispatch, useAppSelector } from '../hooks/index';
+import { editProductAction, fetchProductByIdAction } from '../store/api-actions';
+import { EditProduct } from '../types/product';
+import { productSelector } from '../store/selectors';
+import LoadingScreen from './loading-screen';
+import ErrorScreen from './error-screen';
 
 function EditProductScreen(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
+  const product = useAppSelector(productSelector);
+
+  useEffect(() => {
+    if (!product.isError) {
+      dispatch(fetchProductByIdAction(String(params.id)));
+    }
+
+  }, [dispatch, product.isError, params.id]);
+
+  const [addProductData, setData] = useState({
+    title: product.data?.title,
+    description: '',
+    type: '',
+    sku: '',
+    string: 2,
+    price: '',
+    image: '',
+    id: '',
+    postDate: '',
+  });
+
+  useEffect(() => {
+    if (product.data) {
+      setData(
+        {
+          title: product.data?.title,
+          description: product.data?.description,
+          type: product.data?.type,
+          sku: product.data?.code,
+          string: product.data?.stringsCount,
+          price: product.data?.price.toString(),
+          image: '',
+          id: product.data?.id,
+          postDate: product.data.postDate.toString()
+        }
+      );
+    }
+
+  }, [product.data]);
+
+  const onChange = ({target}: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    setData({...addProductData, [target.name]: target.value});
+  };
+
+  const [image, setImage] = useState<File | undefined>();
+
+  const handleSubmit = (evt: FormEvent) => {
+    evt.preventDefault();
+    const formData: EditProduct = {
+      title: addProductData?.title,
+      description: addProductData.description,
+      type: addProductData.type,
+      code: addProductData.sku,
+      stringsCount:Number(addProductData.string),
+      price: Number(addProductData.price),
+      productImage: image,
+      id: String(params.id),
+      postDate: new Date(addProductData.postDate)
+    };
+
+    dispatch(editProductAction(formData));
+
+  };
+
+  const handleImageUpload = (evt: ChangeEvent<HTMLInputElement>) => {
+    evt.preventDefault();
+    if (!evt.target.files) {
+      return;
+    }
+    setImage(evt.target.files[0]);
+  };
+
+  if (product.isLoading) {
+    return <LoadingScreen/>;
+  }
+
+  if(!product) {
+    return <ErrorScreen/>;
+  }
+
   return (
     <>
       <Helmet>
@@ -16,9 +111,11 @@ function EditProductScreen(): JSX.Element {
               <Logo/>
               <nav className="main-nav">
                 <ul className="main-nav__list">
-                  <li className="main-nav__item"><a className="link main-nav__link" href="main">Каталог</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Каталог</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Список товаров</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Список товаров</Link>
                   </li>
                 </ul>
               </nav>
@@ -27,86 +124,99 @@ function EditProductScreen(): JSX.Element {
           </div>
         </header>
         <main className="page-content">
-          <section className="edit-item">
+          <section className="add-item">
             <div className="container">
-              <h1 className="edit-item__title">СURT Z30 Plus</h1>
+              <h1 className="add-item__title">Новый товар</h1>
               <ul className="breadcrumbs">
-                <li className="breadcrumbs__item"><a className="link" href="./main.html">Вход</a>
+                <li className="breadcrumbs__item">
+                  <Link className="link" to={AppRoute.Main}>Вход</Link>
                 </li>
-                <li className="breadcrumbs__item"><a className="link">Товары</a>
+                <li className="breadcrumbs__item">
+                  <Link className="link" to={AppRoute.Products}>Товары</Link>
                 </li>
-                <li className="breadcrumbs__item"><a className="link">СURT Z30 Plus</a>
+                <li className="breadcrumbs__item">
+                  <Link className="link" to=''>Новый товар</Link>
                 </li>
               </ul>
-              <form className="edit-item__form" action="#" method="get">
-                <div className="edit-item__form-left">
-                  <div className="edit-item-image edit-item__form-image">
+              <form className="add-item__form" action="#" method="get"
+                onSubmit={handleSubmit}
+              >
+
+                <div className="add-item__form-left">
+                  <div className="edit-item-image add-item__form-image">
                     <div className="edit-item-image__image-wrap">
-                      <img className="edit-item-image__image" src="img/content/add-item-1.png" srcSet="img/content/add-item-1@2x.png 2x" width="133" height="332" alt="СURT Z30 Plus">
-                      </img>
+                      {image ? (
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt="Product preview"
+                        />
+                      ) : (
+                        'Upload image'
+                      )}
                     </div>
                     <div className="edit-item-image__btn-wrap">
-                      <button className="button button--small button--black-border edit-item-image__btn">Заменить
+                      <button
+                        className="button button--small button--black-border edit-item-image__btn"
+                        type='button'
+                      >
+                        <label htmlFor="image">Добавить</label>
                       </button>
-                      <button className="button button--small button--black-border edit-item-image__btn">Удалить</button>
+                      <input
+                        type="file"
+                        name="image"
+                        id="image"
+                        accept="image/png, image/jpeg"
+                        hidden
+                        onChange={handleImageUpload}
+                      >
+                      </input>
+                      <button className="button button--small button--black-border edit-item-image__btn" type='button' onClick={() => setImage(undefined)}>Удалить</button>
                     </div>
                   </div>
-                  <div className="input-radio edit-item__form-radio"><span>Тип товара</span>
-                    <input type="radio" id="guitar" name="item-type" value="guitar"></input>
-                    <label htmlFor="guitar">Акустическая гитара</label>
-                    <input type="radio" id="el-guitar" name="item-type" value="el-guitar" checked></input>
-                    <label htmlFor="el-guitar">Электрогитара</label>
-                    <input type="radio" id="ukulele" name="item-type" value="ukulele"></input>
-                    <label htmlFor="ukulele">Укулеле</label>
-                  </div>
-                  <div className="input-radio edit-item__form-radio"><span>Количество струн</span>
-                    <input type="radio" id="string-qty-4" name="string-qty" value="4" checked></input>
-                    <label htmlFor="string-qty-4">4</label>
-                    <input type="radio" id="string-qty-6" name="string-qty" value="6"></input>
-                    <label htmlFor="string-qty-6">6</label>
-                    <input type="radio" id="string-qty-7" name="string-qty" value="7"></input>
-                    <label htmlFor="string-qty-7">7</label>
-                    <input type="radio" id="string-qty-12" name="string-qty" value="12"></input>
-                    <label htmlFor="string-qty-12">12</label>
-                  </div>
+                  <GuitarType onChange={onChange} type={product.data?.type}/>
+                  <StringsCount onChange={onChange} stringCount={product.data?.stringsCount}/>
                 </div>
-                <div className="edit-item__form-right">
-                  <div className="custom-input edit-item__form-input">
+                <div className="add-item__form-right">
+                  <div className="custom-input add-item__form-input">
                     <label><span>Дата добавления товара</span>
-                      <input type="text" name="date" value="19.09.2022" placeholder="Дата в формате 00.00.0000" readOnly></input>
+                      <input type="text" name="date" value={dayjs(addProductData.postDate).format('DD.MM.YYYY').toString()}
+                        placeholder="Дата в формате 00.00.0000" readOnly
+                      >
+                      </input>
                     </label>
                     <p>Заполните поле</p>
                   </div>
-                  <div className="custom-input edit-item__form-input">
-                    <label><span>Наименование товара</span>
-                      <input type="text" name="title" value="СURT Z30 Plus" placeholder="Наименование"></input>
+                  <div className="custom-input add-item__form-input">
+                    <label><span>Введите наименование товара</span>
+                      <input type="text" name="title" value={addProductData.title} placeholder="Наименование"
+                        onChange={onChange}
+                      >
+                      </input>
                     </label>
                     <p>Заполните поле</p>
                   </div>
-                  <div className="custom-input edit-item__form-input edit-item__form-input--price">
-                    <label><span>Цена товара</span>
-                      <input type="text" name="price" value="27 000" placeholder="Цена в формате 00 000"></input>
+                  <div className="custom-input add-item__form-input add-item__form-input--price is-placeholder">
+                    <label><span>Введите цену товара</span>
+                      <input type="text" name="price" value={addProductData.price} placeholder="Цена в формате 00 000" onChange={onChange}></input>
                     </label>
                     <p>Заполните поле</p>
                   </div>
-                  <div className="custom-input edit-item__form-input">
-                    <label><span>Артикул товара</span>
-                      <input type="text" name="sku" value="SO757575" placeholder="Артикул товара"></input>
+                  <div className="custom-input add-item__form-input">
+                    <label><span>Введите артикул товара</span>
+                      <input type="text" name="sku" value={addProductData.sku} placeholder="Артикул товара" onChange={onChange}></input>
                     </label>
                     <p>Заполните поле</p>
                   </div>
-                  <div className="custom-textarea edit-item__form-textarea">
-                    <label><span>Описание товара</span>
-                      <textarea name="description" placeholder="">Гитара подходит как для старта обучения, так и для домашних занятий или использования в полевых условиях, например, в походах или для проведения уличных выступлений.
- Доступная стоимость, качество и надежная конструкция, а также приятный внешний вид, который сделает вас звездой вечеринки.
-                      </textarea>
+                  <div className="custom-textarea add-item__form-textarea">
+                    <label><span>Введите описание товара</span>
+                      <textarea name="description" value={addProductData.description} placeholder="" onChange={onChange}></textarea>
                     </label>
                     <p>Заполните поле</p>
                   </div>
                 </div>
-                <div className="edit-item__form-buttons-wrap">
-                  <button className="button button--small edit-item__form-button" type="submit">Сохранить изменения</button>
-                  <button className="button button--small edit-item__form-button" type="button">Вернуться к списку товаров</button>
+                <div className="add-item__form-buttons-wrap">
+                  <button className="button button--small add-item__form-button" type="submit">Сохранить изменения</button>
+                  <button className="button button--small add-item__form-button" type="button" onClick={() => navigate(AppRoute.Products)}>Вернуться к списку товаров</button>
                 </div>
               </form>
             </div>

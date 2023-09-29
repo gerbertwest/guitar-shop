@@ -18,11 +18,11 @@ export enum ProductError {
   MaxDescriptionLength = 'Maximum description length must be 1024',
   MinCodeLength = 'Minimum address length must be 5',
   MaxCodeLength = 'Maximum address length must be 40',
-  MinPriceLength = 'Minimum price length must be 100',
-  MaxPriceLength = 'Maximum price length must be 1000000',
+  MinPriceLength = 'Minimum price must be 100',
+  MaxPriceLength = 'Maximum price must be 1000000',
   MongoId = 'userId field must be valid an id',
   ProductImage = 'productImage is required',
   ProductImageContains = 'productImage format must be jpeg or png',
-  GuitarType = 'the type of guitar should be электро, акустика, акулеле',
+  GuitarType = 'the type of guitar should be электро, акустика, укулеле',
   StringsCount = 'the number of strings should be 4, 6, 7, 12'
 }

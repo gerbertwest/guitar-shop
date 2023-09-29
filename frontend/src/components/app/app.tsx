@@ -1,4 +1,4 @@
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import ErrorScreen from '../../pages/error-screen';
 import MainScreen from '../../pages/main-screen';
 import {Route, Routes} from 'react-router-dom';
@@ -12,10 +12,17 @@ import { HelmetProvider } from 'react-helmet-async';
 import { useAppSelector } from '../../hooks/index';
 import HistoryRouter from '../history-route';
 import browserHistory from '../../browser-history';
+import LoadingScreen from '../../pages/loading-screen';
 
 function App(): JSX.Element {
 
   const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return (
+      <LoadingScreen/>
+    );
+  }
 
   return (
     <HelmetProvider>
@@ -36,7 +43,7 @@ function App(): JSX.Element {
             }
           />
 
-          <Route path={`${AppRoute.Products}:id`}>
+          <Route path={`${AppRoute.Products}/:id`}>
             <Route index element={
               <PrivateRoute
                 authorizationStatus={authorizationStatus}

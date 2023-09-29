@@ -5,6 +5,8 @@ import UserName from '../components/user-name';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useAppDispatch } from '../hooks/index';
 import { loginAction } from '../store/api-actions';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../const';
 
 function MainScreen(): JSX.Element {
 
@@ -41,11 +43,14 @@ function MainScreen(): JSX.Element {
               <Logo/>
               <nav className="main-nav">
                 <ul className="main-nav__list">
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Каталог</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Каталог</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Где купить?</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>Где купить?</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">О компании</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>О компании</Link>
                   </li>
                 </ul>
               </nav>
@@ -57,7 +62,10 @@ function MainScreen(): JSX.Element {
           <div className="container">
             <section className="login">
               <h1 className="login__title">Войти</h1>
-              <p className="login__text">Hовый пользователь? <a className="login__link" href="registration.html">Зарегистрируйтесь</a> прямо сейчас</p>
+              <p className="login__text">Hовый пользователь?
+                <Link className="login__link" to={AppRoute.Registration}>Зарегистрируйтесь</Link>
+                прямо сейчас
+              </p>
               <form method="post" action="/" onSubmit={handleSubmit}>
                 <div className="input-login">
                   <label htmlFor="email">Введите e-mail</label>
