@@ -8,9 +8,9 @@ import CatalogCards from '../components/catalog-cards';
 import { useAppDispatch, useAppSelector } from '../hooks/index';
 import { productsListSelector } from '../store/selectors';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppRoute } from '../const';
-import { useEffect } from 'react';
-import { fetchProductsAction } from '../store/api-actions';
+import { AppRoute, Sort } from '../const';
+import { useEffect, useState } from 'react';
+import { fetchProductsAction, sortProductsByPriceAction } from '../store/api-actions';
 
 function ProductListScreen(): JSX.Element {
 
@@ -18,9 +18,33 @@ function ProductListScreen(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const [sort, setSort] = useState(Sort.Date);
+  const [sortType, setSortType] = useState(Sort.Down);
+
   useEffect(() => {
-    dispatch(fetchProductsAction());
-  }, [dispatch]);
+    if (sort === Sort.Date) {
+      dispatch(fetchProductsAction(sortType));
+    }
+    if (sort === Sort.Price) {
+      dispatch(sortProductsByPriceAction(sortType));
+    }
+  }, [dispatch, sort, sortType]);
+
+  const handlePriceSort = () => {
+    setSort(Sort.Price);
+  };
+
+  const handleDateSort = () => {
+    setSort(Sort.Date);
+  };
+
+  const handleSortUp = () => {
+    setSortType(Sort.Up);
+  };
+
+  const handleSortDown = () => {
+    setSortType(Sort.Down);
+  };
 
   return (
     <>
@@ -60,7 +84,14 @@ function ProductListScreen(): JSX.Element {
               </ul>
               <div className="catalog">
                 <CatalogFilter/>
-                <CatalogSort/>
+                <CatalogSort
+                  onSortPriceButtonClick={handlePriceSort}
+                  onDatePriceButtonClick={handleDateSort}
+                  onSortTypeUpButtonClick={handleSortUp}
+                  onSortTypeDownButtonClick={handleSortDown}
+                  sort={sort}
+                  sortType={sortType}
+                />
                 <CatalogCards products={products.data}/>
               </div>
               <button className="button product-list__button button--red button--big"

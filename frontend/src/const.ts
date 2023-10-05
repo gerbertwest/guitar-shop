@@ -42,3 +42,10 @@ export enum ProductPageState {
   Characteristics = 'Характеристики',
   Description = 'Описание',
 }
+
+export enum Sort {
+  Price = 'по цене',
+  Date = 'по дате',
+  Up = '1',
+  Down = '-1'
+}

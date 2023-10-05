@@ -5,9 +5,10 @@ import { checkAuthAction, fetchProductsAction } from './store/api-actions';
 import { store } from './store/index';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
+import { Sort } from './const';
 
 store.dispatch(checkAuthAction());
-store.dispatch(fetchProductsAction());
+store.dispatch(fetchProductsAction(Sort.Down));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
