@@ -6,6 +6,7 @@ import { store } from './store/index';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { Sort } from './const';
+import 'react-toastify/dist/ReactToastify.css';
 
 store.dispatch(checkAuthAction());
 store.dispatch(fetchProductsAction(Sort.Down));
