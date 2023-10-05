@@ -19,7 +19,7 @@ export const fetchProductsAction = createAsyncThunk<void, undefined, {
   'data/fetchProducts',
   async (_arg, {dispatch, extra: api}) => {
     dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}?page=2`);
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}`);
     dispatch(loadProducts({isLoading: false}));
     dispatch(loadProducts({data}));
   },
@@ -171,6 +171,8 @@ export const registerAction = createAsyncThunk<void, NewUser, {
 }>(
   'user/register',
   async ({ email, password, name }, {dispatch, extra: api}) => {
+    dropToken();
+    dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
     await api.post<{ id: string }>(APIRoute.Register, {email, password, name});
     dispatch(redirectToRoute(AppRoute.Main));
   }

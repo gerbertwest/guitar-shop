@@ -5,6 +5,8 @@ import UserName from '../components/user-name';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useAppDispatch } from '../hooks/index';
 import { registerAction } from '../store/api-actions';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../const';
 
 function RegistrationScreen(): JSX.Element {
 
@@ -44,11 +46,14 @@ function RegistrationScreen(): JSX.Element {
               <Logo/>
               <nav className="main-nav">
                 <ul className="main-nav__list">
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Каталог</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Каталог</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Где купить?</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>Где купить?</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">О компании</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>О компании</Link>
                   </li>
                 </ul>
               </nav>

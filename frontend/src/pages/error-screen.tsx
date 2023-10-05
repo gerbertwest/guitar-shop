@@ -2,8 +2,13 @@ import { Helmet } from 'react-helmet-async';
 import Footer from '../components/footer';
 import Logo from '../components/logo';
 import UserName from '../components/user-name';
+import { Link, useNavigate } from 'react-router-dom';
+import { AppRoute } from '../const';
 
 function ErrorScreen(): JSX.Element {
+
+  const navigate = useNavigate();
+
   return (
     <>
       <Helmet>
@@ -16,11 +21,14 @@ function ErrorScreen(): JSX.Element {
               <Logo/>
               <nav className="main-nav">
                 <ul className="main-nav__list">
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Каталог</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to={AppRoute.Products}>Каталог</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">Где купить?</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>Где купить?</Link>
                   </li>
-                  <li className="main-nav__item"><a className="link main-nav__link" href="#">О компании</a>
+                  <li className="main-nav__item">
+                    <Link className="link main-nav__link" to=''>О компании</Link>
                   </li>
                 </ul>
               </nav>
@@ -33,7 +41,7 @@ function ErrorScreen(): JSX.Element {
             <section className="error">
               <h1 className="error__title">404</h1><span className="error__subtitle">Страница не найдена.</span>
               <p className="error__text"> Возможно, страница была удалена или <br></br> её вовсе не существовало.</p>
-              <button className="button button__error button--small button--black-border">Продолжить покупки</button>
+              <button className="button button__error button--small button--black-border" onClick={() => navigate(AppRoute.Products)}>Продолжить покупки</button>
             </section>
           </div>
         </main>
