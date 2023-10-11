@@ -38,9 +38,9 @@ export default class ProductController extends Controller {
     this.logger.info('Register routes for FilmController…');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/type', method: HttpMethod.Get, handler: this.findProductsByType});
-    this.addRoute({path: '/strings', method: HttpMethod.Get, handler: this.findProductsByStrings});
-    this.addRoute({path: '/sort', method: HttpMethod.Get, handler: this.sortByPrice});
+    // this.addRoute({path: '/type', method: HttpMethod.Get, handler: this.findProductsByType});
+    // this.addRoute({path: '/strings', method: HttpMethod.Get, handler: this.findProductsByStrings});
+    // this.addRoute({path: '/sort', method: HttpMethod.Get, handler: this.sortByPrice});
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
@@ -119,7 +119,7 @@ export default class ProductController extends Controller {
   public async index(
     { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
     res: Response): Promise<void> {
-    const products = await this.productService.find(query.page, query.limit, query.sortType);
+    const products = await this.productService.find(query.page, query.limit, query.sortType, query.sort, query.type, query.stringsCount);
     this.ok(res, fillDTO(ProductRdo, products));
   }
 
@@ -149,28 +149,28 @@ export default class ProductController extends Controller {
     this.ok(res, fillDTO(ProductRdo, updateProduct));
   }
 
-  public async findProductsByType(
-    { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
-    res: Response
-  ): Promise<void> {
-    const productsByType = await this.productService.findByType(query.limit, query.type);
-    this.ok(res, fillDTO(ProductRdo, productsByType));
-  }
+  // public async findProductsByType(
+  //   { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
+  //   res: Response
+  // ): Promise<void> {
+  //   const productsByType = await this.productService.findByFilter(query.limit, query.type, query.stringsCount);
+  //   this.ok(res, fillDTO(ProductRdo, productsByType));
+  // }
 
-  public async findProductsByStrings(
-    { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
-    res: Response
-  ): Promise<void> {
-    const productsByStrings = await this.productService.findByStrings(query.limit, query.stringsCount);
-    this.ok(res, fillDTO(ProductRdo, productsByStrings));
-  }
+  // public async findProductsByStrings(
+  //   { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
+  //   res: Response
+  // ): Promise<void> {
+  //   const productsByStrings = await this.productService.findByStrings(query.limit, query.stringsCount);
+  //   this.ok(res, fillDTO(ProductRdo, productsByStrings));
+  // }
 
-  public async sortByPrice(
-    { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
-    res: Response): Promise<void> {
-    const products = await this.productService.sortByPrice(query.sortType, query.limit);
-    this.ok(res, fillDTO(ProductRdo, products));
-  }
+  // public async sortByPrice(
+  //   { query }: Request<ParamsProductDetails, Record<string, unknown>, Record<string, unknown>, RequestQuery>,
+  //   res: Response): Promise<void> {
+  //   const products = await this.productService.sortByPrice(query.sortType, query.limit);
+  //   this.ok(res, fillDTO(ProductRdo, products));
+  // }
 
   public async uploadImage(req: Request, res: Response) {
     const {productId} = req.params;

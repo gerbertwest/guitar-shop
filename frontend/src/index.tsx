@@ -9,7 +9,7 @@ import { Sort } from './const';
 import 'react-toastify/dist/ReactToastify.css';
 
 store.dispatch(checkAuthAction());
-store.dispatch(fetchProductsAction(Sort.Down));
+store.dispatch(fetchProductsAction({sortDirection: Sort.Down}));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,

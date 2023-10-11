@@ -6,7 +6,7 @@ import CreateProductDto from './dto/create-product.dto';
 import { ProductServiceInterface } from './product-service.interface.js';
 import { ProductEntity } from './product.entity.js';
 import UpdateProductDto from './dto/update-product.dto.js';
-import { DEFAULT_PRODUCT_COUNT } from './product.constant.js';
+import { DEFAULT_PRODUCT_COUNT, GUITAR_TYPES, STRINGS_COUNT } from './product.constant.js';
 import { SortType } from '../../types/sort-type.enum.js';
 
 @injectable()
@@ -33,43 +33,57 @@ export default class ProductService implements ProductServiceInterface {
     return this.productModel.findOne({title: productName}).exec();
   }
 
-  public async find(page?:number, count?: number, sortType?: SortType): Promise<DocumentType<ProductEntity>[]> {
+  public async find(page?:number, count?: number, sortDirection?: SortType, sort?: string,
+    type?: string[], stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
-    const type = sortType ?? SortType.Down;
+    const sortType = sortDirection ?? SortType.Down;
+    const strings = stringsCount ?? STRINGS_COUNT;
+    const guitarType = type ?? GUITAR_TYPES;
     const pageNumber = page ?? 1;
+
+    if (sort === 'date') {
+      return this.productModel
+        .find({type: {$in: guitarType}, stringsCount: {$in: strings}}, {}, {limit})
+        .sort({createdAt: sortType})
+        .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 1)
+        .populate(['userId'])
+        .exec();
+    }
     return this.productModel
-      .find({}, {}, {limit})
-      .sort({createdAt: type})
+      .find({type: {$in: guitarType}, stringsCount: {$in: strings}}, {}, {limit})
+      .sort({price: sortType})
       .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 1)
       .populate(['userId'])
       .exec();
   }
 
-  public async sortByPrice(type?: SortType, count?: number): Promise<DocumentType<ProductEntity>[]> {
-    const limit = count ?? DEFAULT_PRODUCT_COUNT;
-    const sortType = type ?? SortType.Down;
-    return this.productModel
-      .find({}, {}, {limit})
-      .sort({price: sortType})
-      .populate(['userId'])
-      .exec();
-  }
+  // public async sortByPrice(type?: SortType, count?: number): Promise<DocumentType<ProductEntity>[]> {
+  //   const limit = count ?? DEFAULT_PRODUCT_COUNT;
+  //   const sortType = type ?? SortType.Down;
+  //   return this.productModel
+  //     .find({}, {}, {limit})
+  //     .sort({price: sortType})
+  //     .populate(['userId'])
+  //     .exec();
+  // }
 
-  public async findByType(count?: number, type?: string[]): Promise<DocumentType<ProductEntity>[]> {
-    const limit = count ?? DEFAULT_PRODUCT_COUNT;
-    return this.productModel
-      .find({type: {$in: type}}, {}, {limit})
-      .populate(['userId'])
-      .exec();
-  }
+  // public async findByFilter(count?: number, type?: string[], stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
+  //   const limit = count ?? DEFAULT_PRODUCT_COUNT;
+  //   console.log(stringsCount);
+  //   return this.productModel
+  //     .find({type: {$in: type}, stringsCount: {$in: stringsCount}})
+  //     .populate(['userId'])
+  //     .limit(limit)
+  //     .exec();
+  // }
 
-  public async findByStrings(count?: number, stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
-    const limit = count ?? DEFAULT_PRODUCT_COUNT;
-    return this.productModel
-      .find({stringsCount: {$in: stringsCount}}, {}, {limit})
-      .populate(['userId'])
-      .exec();
-  }
+  // public async findByStrings(count?: number, stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
+  //   const limit = count ?? DEFAULT_PRODUCT_COUNT;
+  //   return this.productModel
+  //     .find({stringsCount: {$in: stringsCount}}, {}, {limit})
+  //     .populate(['userId'])
+  //     .exec();
+  // }
 
   public async deleteById(productId: string): Promise<DocumentType<ProductEntity> | null> {
     return this.productModel

@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from '../hooks/index';
 import { productsListSelector } from '../store/selectors';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute, Sort } from '../const';
-import { useEffect, useState } from 'react';
-import { fetchProductsAction, sortProductsByPriceAction } from '../store/api-actions';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { fetchProductsAction } from '../store/api-actions';
 
 function ProductListScreen(): JSX.Element {
 
@@ -18,33 +18,86 @@ function ProductListScreen(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  //Сортировка
+
   const [sort, setSort] = useState(Sort.Date);
   const [sortType, setSortType] = useState(Sort.Down);
-
-  useEffect(() => {
-    if (sort === Sort.Date) {
-      dispatch(fetchProductsAction(sortType));
-    }
-    if (sort === Sort.Price) {
-      dispatch(sortProductsByPriceAction(sortType));
-    }
-  }, [dispatch, sort, sortType]);
 
   const handlePriceSort = () => {
     setSort(Sort.Price);
   };
-
   const handleDateSort = () => {
     setSort(Sort.Date);
   };
-
   const handleSortUp = () => {
     setSortType(Sort.Up);
   };
-
   const handleSortDown = () => {
     setSortType(Sort.Down);
   };
+
+  //Фильтрация по типу
+
+  const DEFAULT_TYPE: string[] = [];
+  const DEFAULT_STRINGS: number[] = [];
+
+  const [filterType, addFilterType] = useState(DEFAULT_TYPE);
+
+  const filtersByType = (value: string) => {
+    const ind = filterType.indexOf(value);
+    if (ind === -1) {
+      addFilterType([...filterType, value]);
+    }
+    else {
+      addFilterType(() => filterType.filter((val) => val !== value));
+    }
+  };
+
+  const onChangeType = ({target}: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    filtersByType(target.value);
+  };
+
+  //Фильтрация по струнам
+
+  const [filterStrings, addFilterStrings] = useState(DEFAULT_STRINGS);
+
+  const filtersByStrings = (value: number) => {
+    const ind = filterStrings.indexOf(value);
+    if (ind === -1) {
+      addFilterStrings([...filterStrings, value]);
+    }
+    else {
+      addFilterStrings(() => filterStrings.filter((val) => val !== value));
+    }
+  };
+
+  const onChangeStrings = ({target}: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    filtersByStrings(Number(target.value));
+  };
+
+  const handleFilterReset = () => {
+    addFilterStrings([]);
+    addFilterType([]);
+  };
+
+  useEffect(() => {
+    if (filterType.length === 0 && filterStrings.length === 0) {
+      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort}));
+    }
+    if (filterType.length === 0) {
+      const filter = `stringsCount=${filterStrings.join('&stringsCount=')}`;
+      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+    }
+    if(filterStrings.length === 0) {
+      const filter = `type=${filterType.join('&type=')}`;
+      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+    }
+    else {
+      const filter = `type=${filterType.join('&type=')}&stringsCount=${filterStrings.join('&stringsCount=')}`;
+      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+    }
+
+  }, [dispatch, filterStrings, filterType, sort, sortType]);
 
   return (
     <>
@@ -83,7 +136,11 @@ function ProductListScreen(): JSX.Element {
                 </li>
               </ul>
               <div className="catalog">
-                <CatalogFilter/>
+                <CatalogFilter
+                  onChangeType={onChangeType}
+                  onChangeStrings={onChangeStrings}
+                  onFilterReset={handleFilterReset}
+                />
                 <CatalogSort
                   onSortPriceButtonClick={handlePriceSort}
                   onDatePriceButtonClick={handleDateSort}

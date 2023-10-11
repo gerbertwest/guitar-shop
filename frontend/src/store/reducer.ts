@@ -14,7 +14,7 @@ const initialState: Store = {
     isError: false,
     isLoading: false,
     isSending: false,
-  }
+  },
 };
 
 const reducer = createReducer(initialState, (builder) => {

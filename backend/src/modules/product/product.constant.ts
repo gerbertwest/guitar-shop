@@ -26,3 +26,11 @@ export enum ProductError {
   GuitarType = 'the type of guitar should be электро, акустика, укулеле',
   StringsCount = 'the number of strings should be 4, 6, 7, 12'
 }
+
+export const GUITAR_TYPES = [
+  'Электрогитара',
+  'Акустическая гитара',
+  'Укулеле'
+];
+
+export const STRINGS_COUNT = [4, 6, 7, 12];

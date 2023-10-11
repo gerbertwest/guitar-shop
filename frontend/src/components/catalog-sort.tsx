@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 import cn from 'classnames';
 import { Sort } from '../const';
 
-type SortPriceButtonProps = {
+type SortProps = {
   onSortPriceButtonClick: MouseEventHandler<HTMLButtonElement>;
   onDatePriceButtonClick: MouseEventHandler<HTMLButtonElement>;
   onSortTypeUpButtonClick: MouseEventHandler<HTMLButtonElement>;
@@ -12,7 +12,7 @@ type SortPriceButtonProps = {
 }
 
 
-function CatalogSort(props: SortPriceButtonProps): JSX.Element {
+function CatalogSort(props: SortProps): JSX.Element {
 
   return (
     <div className="catalog-sort">

@@ -11,29 +11,48 @@ import { NewUser } from '../types/new-user';
 
 const redirectToRoute = createAction<string>(REDIRECT_ACTION_NAME);
 
-export const fetchProductsAction = createAsyncThunk<void, string, {
+export const fetchProductsAction = createAsyncThunk<void, {
+  sortDirection?: string;
+  filter?: string;
+  sort?: string;
+}, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/fetchProducts',
-  async (sort, {dispatch, extra: api}) => {
+  async ({sortDirection, filter, sort}, {dispatch, extra: api}) => {
     dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sort}`);
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sortDirection}&sort=${sort}&${filter}`);
     dispatch(loadProducts({isLoading: false}));
     dispatch(loadProducts({data}));
   },
 );
 
-export const sortProductsByPriceAction = createAsyncThunk<void, string, {
+export const filterByTypeAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/filterByType',
+  async (filter, {dispatch, extra: api}) => {
+    dispatch(loadProducts({isLoading: true}));
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}?${filter}`);
+    dispatch(loadProducts({isLoading: false}));
+    dispatch(loadProducts({data}));
+  },
+);
+
+export const sortProductsByPriceAction = createAsyncThunk<void, string[], {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/sortProductsByPrice',
-  async (sort, {dispatch, extra: api}) => {
+  async ([sortDirection, filter], {dispatch, extra: api}) => {
     dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}/sort?sortType=${sort}`);
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sortDirection}&sort=price&${filter}`);
     dispatch(loadProducts({isLoading: false}));
     dispatch(loadProducts({data}));
   },
