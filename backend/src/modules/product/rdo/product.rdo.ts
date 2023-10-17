@@ -34,4 +34,7 @@ export default class ProductRdo {
   @Expose({ name: 'userId'})
   @Type(() => UserRdo)
   public user!: UserRdo;
+
+  @Expose()
+  public total!: number;
 }

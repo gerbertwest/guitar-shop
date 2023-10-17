@@ -15,48 +15,49 @@ export const fetchProductsAction = createAsyncThunk<void, {
   sortDirection?: string;
   filter?: string;
   sort?: string;
+  page?: string;
 }, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/fetchProducts',
-  async ({sortDirection, filter, sort}, {dispatch, extra: api}) => {
+  async ({sortDirection, filter, sort, page}, {dispatch, extra: api}) => {
     dispatch(loadProducts({isLoading: true}));
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sortDirection}&sort=${sort}&${filter}`);
+    const {data} = await api.get<Product[]>(`${APIRoute.Products}?${page}&${sortDirection}&${sort}&${filter}`);
     dispatch(loadProducts({isLoading: false}));
     dispatch(loadProducts({data}));
   },
 );
 
-export const filterByTypeAction = createAsyncThunk<void, string, {
-  dispatch: AppDispatch;
-  state: State;
-  extra: AxiosInstance;
-}>(
-  'data/filterByType',
-  async (filter, {dispatch, extra: api}) => {
-    dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}?${filter}`);
-    dispatch(loadProducts({isLoading: false}));
-    dispatch(loadProducts({data}));
-  },
-);
+// export const filterByTypeAction = createAsyncThunk<void, string, {
+//   dispatch: AppDispatch;
+//   state: State;
+//   extra: AxiosInstance;
+// }>(
+//   'data/filterByType',
+//   async (filter, {dispatch, extra: api}) => {
+//     dispatch(loadProducts({isLoading: true}));
+//     const {data} = await api.get<Product[]>(`${APIRoute.Products}?${filter}`);
+//     dispatch(loadProducts({isLoading: false}));
+//     dispatch(loadProducts({data}));
+//   },
+// );
 
-export const sortProductsByPriceAction = createAsyncThunk<void, string[], {
-  dispatch: AppDispatch;
-  state: State;
-  extra: AxiosInstance;
-}>(
-  'data/sortProductsByPrice',
-  async ([sortDirection, filter], {dispatch, extra: api}) => {
-    dispatch(loadProducts({isLoading: true}));
-    const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sortDirection}&sort=price&${filter}`);
-    dispatch(loadProducts({isLoading: false}));
-    dispatch(loadProducts({data}));
-  },
-);
+// export const sortProductsByPriceAction = createAsyncThunk<void, string[], {
+//   dispatch: AppDispatch;
+//   state: State;
+//   extra: AxiosInstance;
+// }>(
+//   'data/sortProductsByPrice',
+//   async ([sortDirection, filter], {dispatch, extra: api}) => {
+//     dispatch(loadProducts({isLoading: true}));
+//     const {data} = await api.get<Product[]>(`${APIRoute.Products}?sortType=${sortDirection}&sort=price&${filter}`);
+//     dispatch(loadProducts({isLoading: false}));
+//     dispatch(loadProducts({data}));
+//   },
+// );
 
 export const fetchProductByIdAction = createAsyncThunk<void, string, {
   dispatch: AppDispatch;

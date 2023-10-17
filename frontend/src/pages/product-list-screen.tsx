@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute, Sort } from '../const';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchProductsAction } from '../store/api-actions';
+import cn from 'classnames';
 
 function ProductListScreen(): JSX.Element {
 
@@ -80,24 +81,35 @@ function ProductListScreen(): JSX.Element {
     addFilterType([]);
   };
 
+
+  // Пагинация
+
+  //console.log(products.data.length);
+
+  const [pageNumber, setPageNumber] = useState(1);
+
+
   useEffect(() => {
+    const sorting = `sort=${sort}`;
+    const sortDirection = `sortType=${sortType}`;
+    const page = `page=${pageNumber}`;
     if (filterType.length === 0 && filterStrings.length === 0) {
-      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort}));
+      dispatch(fetchProductsAction({sortDirection: sortDirection, sort: sorting, page:page}));
     }
     if (filterType.length === 0) {
       const filter = `stringsCount=${filterStrings.join('&stringsCount=')}`;
-      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+      dispatch(fetchProductsAction({sortDirection: sortDirection, sort: sorting, filter: filter, page:page}));
     }
     if(filterStrings.length === 0) {
       const filter = `type=${filterType.join('&type=')}`;
-      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+      dispatch(fetchProductsAction({sortDirection: sortDirection, sort: sorting, filter: filter, page:page}));
     }
     else {
       const filter = `type=${filterType.join('&type=')}&stringsCount=${filterStrings.join('&stringsCount=')}`;
-      dispatch(fetchProductsAction({sortDirection: sortType, sort: sort, filter: filter}));
+      dispatch(fetchProductsAction({sortDirection: sortDirection, sort: sorting, filter: filter, page:page}));
     }
 
-  }, [dispatch, filterStrings, filterType, sort, sortType]);
+  }, [dispatch, filterStrings, filterType, pageNumber, sort, sortType]);
 
   return (
     <>
@@ -157,13 +169,17 @@ function ProductListScreen(): JSX.Element {
               </button>
               <div className="pagination product-list__pagination">
                 <ul className="pagination__list">
-                  <li className="pagination__page pagination__page--active"><a className="link pagination__page-link" href="1">1</a>
+                  <li className="pagination__page ">
+                    <Link className='link pagination__page-link' to='' onClick = {() => setPageNumber(1)}>1</Link >
                   </li>
-                  <li className="pagination__page"><a className="link pagination__page-link" href="2">2</a>
+                  <li className="pagination__page">
+                    <Link className="link pagination__page-link" to='' onClick = {() => setPageNumber(2)}>2</Link>
                   </li>
-                  <li className="pagination__page"><a className="link pagination__page-link" href="3">3</a>
+                  <li className="pagination__page">
+                    <Link className="link pagination__page-link" to='' onClick = {() => setPageNumber(3)}>3</Link>
                   </li>
-                  <li className="pagination__page pagination__page--next" id="next"><a className="link pagination__page-link" href="2">Далее</a>
+                  <li className="pagination__page pagination__page--next" id="next">
+                    <Link className="link pagination__page-link" to='' onClick = {() => setPageNumber(pageNumber + 1)}>Далее</Link>
                   </li>
                 </ul>
               </div>
@@ -177,3 +193,6 @@ function ProductListScreen(): JSX.Element {
 }
 
 export default ProductListScreen;
+
+
+'pagination__page--active'

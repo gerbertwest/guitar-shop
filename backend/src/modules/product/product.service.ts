@@ -35,24 +35,88 @@ export default class ProductService implements ProductServiceInterface {
 
   public async find(page?:number, count?: number, sortDirection?: SortType, sort?: string,
     type?: string[], stringsCount?: number[]): Promise<DocumentType<ProductEntity>[]> {
+
     const limit = count ?? DEFAULT_PRODUCT_COUNT;
     const sortType = sortDirection ?? SortType.Down;
     const strings = stringsCount ?? STRINGS_COUNT;
     const guitarType = type ?? GUITAR_TYPES;
     const pageNumber = page ?? 1;
 
+    return this.productModel
+      .aggregate([
+        {
+          $facet:
+          {
+            'products':
+        [
+          {
+            $match: {
+              type: {$in: guitarType},
+              stringsCount: {$in: strings}
+            }
+          },
+          {
+            $sort: {createdAt: sortType}
+          },
+          {
+            $skip: limit * pageNumber
+          },
+          {
+            $limit: limit
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: '_id',
+              foreignField: 'userId',
+              as: 'user'
+            },
+          },
+        ],
+            'count':
+        [
+          {
+            $group:
+            {
+              _id: '$_id',
+              'total': { $sum: 1 },
+            }
+          }
+        ]
+          }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $addFields:
+          {
+            'products.total': {$arrayElemAt:['$count.total',0]}
+          }
+        },
+        {
+          $replaceRoot:
+          {
+            newRoot: '$products'
+          }
+        }
+      ])
+      .exec();
+
     if (sort === 'date') {
       return this.productModel
-        .find({type: {$in: guitarType}, stringsCount: {$in: strings}}, {}, {limit})
+        .find({type: {$in: guitarType}, stringsCount: {$in: strings}})
         .sort({createdAt: sortType})
-        .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 1)
+        .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 0)
+        .limit(limit)
         .populate(['userId'])
         .exec();
     }
     return this.productModel
-      .find({type: {$in: guitarType}, stringsCount: {$in: strings}}, {}, {limit})
+      .find({type: {$in: guitarType}, stringsCount: {$in: strings}})
       .sort({price: sortType})
       .skip(pageNumber > 0 ? limit * (pageNumber - 1) : 1)
+      .limit(limit)
       .populate(['userId'])
       .exec();
   }
