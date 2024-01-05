@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute, Sort } from '../const';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchProductsAction } from '../store/api-actions';
-import cn from 'classnames';
+//import cn from 'classnames';
 
 function ProductListScreen(): JSX.Element {
 
@@ -195,4 +195,4 @@ function ProductListScreen(): JSX.Element {
 export default ProductListScreen;
 
 
-'pagination__page--active'
+//'pagination__page--active'
